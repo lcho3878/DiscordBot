@@ -1,4 +1,12 @@
 # nixpacks.toml
 
 [phases.setup]
-aptPkgs = ["ffmpeg", "libopus-dev"]
+aptPkgs = [
+  "ffmpeg",
+  "libopus-dev",
+  "libopus0",
+  "opus-tools",
+]
+
+[start]
+cmd = "python3 main.py"
