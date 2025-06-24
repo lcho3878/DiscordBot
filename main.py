@@ -21,6 +21,7 @@ SKIP_MESSAGE = os.environ.get('SKIP_MESSAGE')
 # 유튜브 API 키 (https://console.developers.google.com 에서 발급)
 DISCORD_BOT_TOKEN = os.environ.get('DISCORD_BOT_TOKEN')
 YOUTUBE_API_KEY = os.environ.get('YOUTUBE_API_KEY')
+YOUTUBE_COOKIE_STRING = os.environ.get('YOUTUBE_COOKIE_STRING')
 youtube = build('youtube', 'v3', developerKey=YOUTUBE_API_KEY)
 
 FFMPEG_OPTIONS = {
