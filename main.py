@@ -8,6 +8,8 @@ from googleapiclient.discovery import build
 import yt_dlp
 import asyncio
 
+load_dotenv()
+
 # 디스코드 봇 설정
 intents = discord.Intents.default()
 intents.message_content = True
