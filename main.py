@@ -36,7 +36,10 @@ YDL_OPTIONS = {
     'noplaylist': True,
     'extract_flat': False,
     'skip_download': True,
-    'forceurl': True
+    'forceurl': True,
+    'http_headers': {
+        'Cookie': YOUTUBE_COOKIE_STRING
+    }
 }
 
 
