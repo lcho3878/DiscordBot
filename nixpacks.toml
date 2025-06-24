@@ -8,5 +8,7 @@ aptPkgs = [
   "opus-tools",
 ]
 
+postInstall = "ldconfig"
+
 [start]
 cmd = "python3 main.py"
