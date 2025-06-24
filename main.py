@@ -63,6 +63,17 @@ def search_youtube(query):
     # 없으면 그냥 첫 번째 결과 리턴
     return f"https://www.youtube.com/watch?v={response['items'][0]['id']['videoId']}"
 
+def search_and_get_info(query):
+    # yt-dlp가 직접 검색하도록 합니다. 'ytsearch1:'은 검색 결과 1개를 의미합니다.
+    search_query = f"ytsearch1:{query} official audio"
+    with yt_dlp.YoutubeDL(YDL_OPTIONS) as ydl:
+        # 검색과 정보 추출을 한 번에 실행합니다.
+        info = ydl.extract_info(search_query, download=False)
+        # 검색 결과가 리스트 형태로 반환되므로 첫 번째 항목을 사용합니다.
+        if 'entries' in info and info['entries']:
+            return info['entries'][0]
+    return None
+
 
 @bot.event
 async def on_message(message):
@@ -89,12 +100,33 @@ async def on_message(message):
         elif message.guild.voice_client.channel != voice_channel:
             await message.guild.voice_client.move_to(voice_channel)
 
-        url = search_youtube(query)
-        await message.channel.send(f"🔍 검색 결과: {url}")
+        try:
+            info = search_and_get_info(query)
+            if not info:
+                await message.channel.send("🔍 검색 결과를 찾지 못했어요.")
+                return
 
-        with yt_dlp.YoutubeDL(YDL_OPTIONS) as ydl:
-            info = ydl.extract_info(url, download=False)
+            url = info['webpage_url']
             audio_url = info['url']
+            title = info['title']
+            await message.channel.send(f"🎵 **{title}** 재생을 시작할게요!\n{url}")
+
+        except yt_dlp.utils.DownloadError as e:
+            # 429 오류 등을 여기서 잡아서 사용자에게 친절하게 알려줍니다.
+            await message.channel.send("⚠️ 유튜브 요청 제한에 걸렸거나 영상을 불러올 수 없어요. 잠시 후 다시 시도해 주세요.")
+            print(f"yt-dlp 오류 발생: {e}")
+            return
+        except Exception as e:
+            await message.channel.send("⚙️ 알 수 없는 오류가 발생했어요.")
+            print(f"일반 오류 발생: {e}")
+            return
+
+        # url = search_youtube(query)
+        # await message.channel.send(f"🔍 검색 결과: {url}")
+
+        # with yt_dlp.YoutubeDL(YDL_OPTIONS) as ydl:
+        #     info = ydl.extract_info(url, download=False)
+        #     audio_url = info['url']
 
         vc = message.guild.voice_client
         if vc.is_playing():
