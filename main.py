@@ -25,17 +25,12 @@ SKIP_MESSAGE = os.environ.get('SKIP_MESSAGE')
 DISCORD_BOT_TOKEN = os.environ.get('DISCORD_BOT_TOKEN')
 YOUTUBE_API_KEY = os.environ.get('YOUTUBE_API_KEY')
 YOUTUBE_COOKIE_STRING = os.environ.get('YOUTUBE_COOKIE_STRING')
-COOKIE_FILE_BASE64 = os.environ.get('YOUTUBE_COOKIE_FILE_BASE64')
-if COOKIE_FILE_BASE64:
-    try:
-        # Base64 문자열을 원래의 바이트(bytes) 데이터로 디코딩
-        decoded_cookie_data = base64.b64decode(COOKIE_FILE_BASE64)
-        
-        # 바이트 데이터를 파일에 씀 (텍스트 모드가 아닌 'wb' - write binary 모드)
-        with open("cookies.txt", "wb") as f:
-            f.write(decoded_cookie_data)
-    except Exception as e:
-        print(f"쿠키 파일 생성 중 오류 발생: {e}")
+YOUTUBE_COOKIE_DATA = os.environ.get('YOUTUBE_COOKIE_FILE_CONTENT')
+
+if YOUTUBE_COOKIE_DATA:
+    with open("cookies.txt", "w", encoding='utf-8') as f:
+        f.write(YOUTUBE_COOKIE_DATA)
+    print("INFO: 'cookies.txt' 파일이 환경 변수로부터 생성되었습니다.")
 
 youtube = build('youtube', 'v3', developerKey=YOUTUBE_API_KEY)
 
@@ -58,6 +53,9 @@ YDL_OPTIONS = {
     # }
 }
 
+if not os.path.exists('cookies.txt'):
+    del YDL_OPTIONS['cookiefile'] # 파일이 없으면 이 옵션을 제거
+    print("WARNING: 'cookies.txt' 파일이 존재하지 않습니다. 403 에러가 발생할 수 있습니다.")
 
 # 유튜브 검색 함수
 def search_youtube(query):
