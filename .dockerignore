@@ -1,0 +1,20 @@
+# .dockerignore 파일 내용
+
+# 민감한 정보 파일
+.env
+
+# 파이썬 가상환경 폴더
+venv
+.venv
+
+# Git 폴더
+.git
+
+# VS Code 설정 폴더
+.vscode
+
+# 파이썬 캐시 파일
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
