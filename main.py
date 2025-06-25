@@ -1,5 +1,6 @@
 
 import os
+import base64
 from dotenv import load_dotenv
 import discord
 from keep_alive import keep_alive  # 이 줄을 추가하세요
@@ -24,6 +25,18 @@ SKIP_MESSAGE = os.environ.get('SKIP_MESSAGE')
 DISCORD_BOT_TOKEN = os.environ.get('DISCORD_BOT_TOKEN')
 YOUTUBE_API_KEY = os.environ.get('YOUTUBE_API_KEY')
 YOUTUBE_COOKIE_STRING = os.environ.get('YOUTUBE_COOKIE_STRING')
+COOKIE_FILE_BASE64 = os.environ.get('YOUTUBE_COOKIE_FILE_BASE64')
+if COOKIE_FILE_BASE64:
+    try:
+        # Base64 문자열을 원래의 바이트(bytes) 데이터로 디코딩
+        decoded_cookie_data = base64.b64decode(COOKIE_FILE_BASE64)
+        
+        # 바이트 데이터를 파일에 씀 (텍스트 모드가 아닌 'wb' - write binary 모드)
+        with open("cookies.txt", "wb") as f:
+            f.write(decoded_cookie_data)
+    except Exception as e:
+        print(f"쿠키 파일 생성 중 오류 발생: {e}")
+
 youtube = build('youtube', 'v3', developerKey=YOUTUBE_API_KEY)
 
 FFMPEG_OPTIONS = {
@@ -39,10 +52,10 @@ YDL_OPTIONS = {
     'extract_flat': False,
     'skip_download': True,
     'forceurl': True,
-    # 'source_adress': '0.0.0.0',
-    'http_headers': {
-        'Cookie': YOUTUBE_COOKIE_STRING
-    }
+    'cookiefile': 'cookies.txt'
+    # 'http_headers': {
+    #     'Cookie': YOUTUBE_COOKIE_STRING
+    # }
 }
 
 

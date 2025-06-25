@@ -1,0 +1,25 @@
+# fly.toml app configuration file generated for byun-bot on 2025-06-25T22:29:23+09:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'byun-bot'
+primary_region = 'sin'
+[[services]]
+  protocol = "tcp"
+  internal_port = 8080 # keep_alive.py에서 사용하는 포트
+  processes = ["app"]
+
+  [[services.ports]]
+    port = 80 # HTTP
+    handlers = ["http"]
+  [[services.ports]]
+    port = 443 # HTTPS
+    handlers = ["tls", "http"]
+
+# 이 부분이 가장 중요합니다!
+[processes]
+  app = "python main.py"
+
+[[vm]]
+  size = 'shared-cpu-1x'
